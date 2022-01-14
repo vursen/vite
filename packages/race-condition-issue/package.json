@@ -1,0 +1,20 @@
+{
+  "name": "vite-race-condition-issue",
+  "version": "1.0.0",
+  "description": "A reproduction of the race condition issue",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build-vite": "cd ../vite && npm run build",
+    "serve": "pnpm run build-vite && vite --force --debug",
+    "postinstall": "ts-node ../../scripts/patchFileDeps.ts"
+  },
+  "dependencies": {
+    "dep": "file:./dep",
+    "missing-dep": "file:./missing-dep"
+  },
+  "devDependencies": {
+    "vite": "file:../vite"
+  }
+}

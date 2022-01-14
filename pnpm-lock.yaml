@@ -721,6 +721,17 @@ importers:
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.16.5
       hash-sum: 2.0.0
 
+  packages/race-condition-issue:
+    specifiers:
+      dep: file:./dep
+      missing-dep: file:./missing-dep
+      vite: workspace:*
+    dependencies:
+      dep: link:dep
+      missing-dep: link:missing-dep
+    devDependencies:
+      vite: link:../vite
+
   packages/vite:
     specifiers:
       '@ampproject/remapping': ^1.0.2
