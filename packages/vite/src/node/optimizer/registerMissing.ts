@@ -49,7 +49,8 @@ export function createMissingImporterRegisterFn(
         true,
         false,
         newDeps,
-        ssr
+        ssr,
+        server
       ))
       knownOptimized = newData!.optimized
 

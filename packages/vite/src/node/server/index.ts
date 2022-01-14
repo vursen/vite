@@ -144,6 +144,11 @@ export type ServerHook = (
 ) => (() => void) | void | Promise<(() => void) | void>
 
 export interface ViteDevServer {
+  /** --- PATCH BEGIN --- */
+  ___PATCH___RESOLVE_REQUEST?: (value: unknown) => void
+  ___PATCH___REQUEST_RESOLVED?: boolean
+  /** --- PATCH END --- */
+
   /**
    * The resolved vite config object
    */

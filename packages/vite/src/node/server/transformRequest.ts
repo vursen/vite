@@ -106,6 +106,20 @@ async function doTransform(
     if (options.ssr || isFileServingAllowed(file, server)) {
       try {
         code = await fs.readFile(file, 'utf-8')
+
+        /* --- PATCH BEGIN --- */
+        // Simulate the situation when there is an event loop delay before `fs.readFile` returns the result
+        // for the initially pre-bundled `dep` dependency: the request ends up resolved
+        // during the optimization deps process, caused by requesting `missing-dep`,
+        // exactly at the moment the cache folder is empty but esbuild is not yet run.
+        if (!server.___PATCH___RESOLVE_REQUEST && url.includes('.vite/dep')) {
+          logger.info(`[PATCH] Simulate a delay for the request: ${url}`)
+          await new Promise((resolve) => {
+            server.___PATCH___RESOLVE_REQUEST = resolve
+          })
+        }
+        /* --- PATCH END --- */
+
         isDebug && debugLoad(`${timeFrom(loadStart)} [fs] ${prettyUrl}`)
       } catch (e) {
         if (e.code !== 'ENOENT') {

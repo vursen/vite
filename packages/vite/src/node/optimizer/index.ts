@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import colors from 'picocolors'
 import { createHash } from 'crypto'
+import type { ViteDevServer } from '..'
 import type { BuildOptions as EsbuildBuildOptions } from 'esbuild'
 import { build } from 'esbuild'
 import type { ResolvedConfig } from '../config'
@@ -108,7 +109,8 @@ export async function optimizeDeps(
   force = config.server.force,
   asCommand = false,
   newDeps?: Record<string, string>, // missing imports encountered after server has started
-  ssr?: boolean
+  ssr?: boolean,
+  server?: ViteDevServer
 ): Promise<DepOptimizationMetadata | null> {
   config = {
     ...config,
@@ -287,6 +289,20 @@ export async function optimizeDeps(
   }
 
   const start = performance.now()
+
+  /* --- PATCH BEGIN --- */
+  // The cache folder is empty at this moment, but esbuild is not run yet.
+  // Let's resolve stale `.vite/dep.js` request:
+  if (
+    server &&
+    !server.___PATCH___REQUEST_RESOLVED &&
+    server.___PATCH___RESOLVE_REQUEST
+  ) {
+    logger.info('[PATCH] Resolve the delayed request...')
+    server.___PATCH___RESOLVE_REQUEST?.(undefined)
+    server.___PATCH___REQUEST_RESOLVED = true
+  }
+  /* --- PATCH END --- */
 
   const result = await build({
     absWorkingDir: process.cwd(),
